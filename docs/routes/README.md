@@ -89,3 +89,81 @@ const TabsLayout = () => {
 
 export default TabsLayout;
 ```
+
+## [Drawer](https://docs.expo.dev/router/advanced/drawer/)
+
+```sh
+npx expo install @react-navigation/drawer react-native-gesture-handler react-native-reanimated
+```
+
+```tsx
+import "react-native-gesture-handler";
+
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Drawer } from "expo-router/drawer";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+export default function Layout() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Drawer>
+        <Drawer.Screen
+          name="index"
+          options={{
+            drawerLabel: "Home",
+            headerTitle: "Home",
+            drawerIcon: ({ size, color }) => (
+              <Ionicons name="home-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="news"
+          options={{
+            drawerLabel: "News",
+            headerTitle: "News",
+            drawerIcon: ({ size, color }) => (
+              <Ionicons name="newspaper-outline" size={size} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          name="profile"
+          options={{
+            drawerLabel: "Profile",
+            headerTitle: "Profile",
+            drawerIcon: ({ size, color }) => (
+              <Ionicons name="person-outline" size={size} color={color} />
+            ),
+          }}
+        />
+      </Drawer>
+    </GestureHandlerRootView>
+  );
+}
+```
+
+```tsx
+import { DrawerActions } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
+import { Button, StyleSheet, Text, View } from "react-native";
+
+const Home = () => {
+  const navigation = useNavigation();
+  const onToggle = () => {
+    navigation.dispatch(DrawerActions.openDrawer());
+  };
+
+  return (
+    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Text>Home</Text>
+
+      <Button title="Toggle Drawer" onPress={onToggle} />
+    </View>
+  );
+};
+
+export default Home;
+
+const styles = StyleSheet.create({});
+```
