@@ -1,88 +1,46 @@
-import { useNavigation } from "expo-router";
-import React, { useEffect, useRef } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import MapView, {
-  Callout,
-  Marker,
-  PROVIDER_GOOGLE,
-  Region,
-} from "react-native-maps";
+import { StyleSheet, View } from "react-native";
+import MapView from "react-native-maps";
 
-import { markers } from "../assets/markers";
+import * as Location from "expo-location";
+import { useEffect, useState } from "react";
 
-const INITIAL_REGION = {
-  latitude: 37.33,
-  longitude: -122,
-  latitudeDelta: 2,
-  longitudeDelta: 2,
-};
-
-export default function App() {
-  const mapRef = useRef<any>(null);
-  const navigation = useNavigation();
+const Airbnb = () => {
+  const [location, setLocation] = useState<any>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity onPress={focusMap}>
-          <View style={{ padding: 10 }}>
-            <Text>Focus</Text>
-          </View>
-        </TouchableOpacity>
-      ),
-    });
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
   }, []);
 
-  const focusMap = () => {
-    const GreenBayStadium = {
-      latitude: 44.5013,
-      longitude: -88.0622,
-      latitudeDelta: 0.1,
-      longitudeDelta: 0.1,
-    };
-
-    mapRef.current?.animateToRegion(GreenBayStadium);
-    // mapRef.current?.animateCamera({ center: GreenBayStadium, zoom: 10 }, { duration: 2000 });
-  };
-
-  const onMarkerSelected = (marker: any) => {
-    Alert.alert(marker.name);
-  };
-
-  const calloutPressed = (ev: any) => {
-    console.log(ev);
-  };
-
-  const onRegionChange = (region: Region) => {
-    console.log(region);
-  };
+  console.log(location);
+  if (!location) return null;
 
   return (
-    <View style={{ flex: 1 }}>
+    <View>
       <MapView
-        style={StyleSheet.absoluteFillObject}
-        initialRegion={INITIAL_REGION}
+        style={styles.map}
+        initialRegion={location}
         showsUserLocation
         showsMyLocationButton
-        provider={PROVIDER_GOOGLE}
-        ref={mapRef}
-        onRegionChangeComplete={onRegionChange}
-      >
-        {markers.map((marker, index) => (
-          <Marker
-            key={index}
-            title={marker.name}
-            coordinate={marker}
-            onPress={() => onMarkerSelected(marker)}
-          >
-            <Callout onPress={calloutPressed}>
-              <View style={{ padding: 10 }}>
-                <Text style={{ fontSize: 24 }}>Hello</Text>
-              </View>
-            </Callout>
-          </Marker>
-        ))}
-      </MapView>
+      />
     </View>
   );
-}
+};
+
+export default Airbnb;
+
+const styles = StyleSheet.create({
+  map: {
+    width: "100%",
+    height: "100%",
+  },
+});
