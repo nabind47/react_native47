@@ -1,14 +1,12 @@
-import { useNavigation } from "expo-router";
-import React, { useEffect, useRef } from "react";
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import MapView, {
-  Callout,
-  Marker,
-  PROVIDER_GOOGLE,
-  Region,
-} from "react-native-maps";
+```sh
+npx expo install react-native-maps
+```
 
-import { markers } from "../assets/markers";
+```tsx
+import { useNavigation } from "expo-router";
+import { useEffect, useRef } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import MapView, { PROVIDER_GOOGLE, Region } from "react-native-maps";
 
 const INITIAL_REGION = {
   latitude: 37.33,
@@ -18,8 +16,8 @@ const INITIAL_REGION = {
 };
 
 export default function App() {
-  const mapRef = useRef<any>(null);
   const navigation = useNavigation();
+  const mapRef = useRef<any>();
 
   useEffect(() => {
     navigation.setOptions({
@@ -42,15 +40,6 @@ export default function App() {
     };
 
     mapRef.current?.animateToRegion(GreenBayStadium);
-    // mapRef.current?.animateCamera({ center: GreenBayStadium, zoom: 10 }, { duration: 2000 });
-  };
-
-  const onMarkerSelected = (marker: any) => {
-    Alert.alert(marker.name);
-  };
-
-  const calloutPressed = (ev: any) => {
-    console.log(ev);
   };
 
   const onRegionChange = (region: Region) => {
@@ -67,22 +56,8 @@ export default function App() {
         provider={PROVIDER_GOOGLE}
         ref={mapRef}
         onRegionChangeComplete={onRegionChange}
-      >
-        {markers.map((marker, index) => (
-          <Marker
-            key={index}
-            title={marker.name}
-            coordinate={marker}
-            onPress={() => onMarkerSelected(marker)}
-          >
-            <Callout onPress={calloutPressed}>
-              <View style={{ padding: 10 }}>
-                <Text style={{ fontSize: 24 }}>Hello</Text>
-              </View>
-            </Callout>
-          </Marker>
-        ))}
-      </MapView>
+      ></MapView>
     </View>
   );
 }
+```
